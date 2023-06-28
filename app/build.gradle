@@ -1,6 +1,7 @@
 plugins {
-    alias(libs.plugins.androidApplication)
-    alias(libs.plugins.kotlinAndroid)
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
 }
 
 android {
@@ -31,19 +32,18 @@ android {
         jvmTarget = '1.8'
     }
 
-    dataBinding{
-        enable = true
+    dataBinding {
+        enabled = true
     }
 }
 
 dependencies {
 
-    implementation libs.core.ktx
-    implementation libs.appcompat
-    implementation libs.material
-    implementation libs.constraintlayout
+    implementation 'androidx.appcompat:appcompat:1.4.2'
+    implementation 'com.google.android.material:material:1.4.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation project(path: ':idCardReader')
-    testImplementation libs.junit
-    androidTestImplementation libs.androidx.test.ext.junit
-    androidTestImplementation libs.espresso.core
+    testImplementation 'junit:junit:4.+'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 }

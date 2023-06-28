@@ -52,14 +52,7 @@ android {
 }
 
 dependencies {
-
-    implementation libs.core.ktx
-    implementation libs.appcompat
-    implementation libs.material
     api files('libs/plsyreadersdk.jar')
-    testImplementation libs.junit
-    androidTestImplementation libs.androidx.test.ext.junit
-    androidTestImplementation libs.espresso.core
     implementation 'org.greenrobot:eventbus:3.0.0'
 
 }
