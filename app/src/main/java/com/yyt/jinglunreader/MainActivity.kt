@@ -18,6 +18,8 @@ class MainActivity : AppCompatActivity() {
             IDCardReadPlugin.instance.startRead()
         }
 
+        IDCardReadPlugin.instance.startRead()
+
         binding.btnStop.setOnClickListener {
             IDCardReadPlugin.instance.stopRead()
         }
@@ -29,6 +31,7 @@ class MainActivity : AppCompatActivity() {
             ) {
 
                 binding.tvContent.text = cardInfo.address
+                finish()
             }
 
             override fun onGetCardId(cardNumber: String) {
@@ -44,5 +47,10 @@ class MainActivity : AppCompatActivity() {
             }
 
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        IDCardReadPlugin.instance.release()
     }
 }

@@ -29,7 +29,7 @@ class IDCardReadPlugin : IReaderView {
     }
 
 
-    private var presenter: ReaderPresenter? = ReaderPresenter(this)
+    private var presenter: ReaderPresenter?=null
     private val defaultOption: DeviceParamBean
         get() {
             val bean = DeviceParamBean()
@@ -50,6 +50,9 @@ class IDCardReadPlugin : IReaderView {
 
     fun startRead(param: DeviceParamBean? = null) {
         try{
+            if (presenter==null){
+                presenter = ReaderPresenter(this)
+            }
             presenter?.startReadcard(param ?: defaultOption)
         }catch (e:Exception){
             onReadListener?.onFail("读卡器开启失败，请检查是否连接读卡器")
