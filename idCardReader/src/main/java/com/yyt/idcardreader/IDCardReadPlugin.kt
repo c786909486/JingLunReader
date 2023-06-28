@@ -49,7 +49,11 @@ class IDCardReadPlugin : IReaderView {
 
 
     fun startRead(param: DeviceParamBean? = null) {
-        presenter?.startReadcard(param ?: defaultOption)
+        try{
+            presenter?.startReadcard(param ?: defaultOption)
+        }catch (e:Exception){
+            onReadListener?.onFail("读卡器开启失败，请检查是否连接读卡器")
+        }
     }
 
     fun stopRead() {

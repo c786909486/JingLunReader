@@ -726,6 +726,9 @@ public class ReaderTask {
 					break;
 				}
 
+				if (mReader==null){
+					return;
+				}
 				mReader.setUsingCache(mDeviceParamBean.isUse_cache());
 
 				Log.d(TAG, "SDT_OpenPort ret=" + ret);
