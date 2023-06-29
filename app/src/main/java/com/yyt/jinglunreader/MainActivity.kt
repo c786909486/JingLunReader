@@ -30,12 +30,12 @@ class MainActivity : AppCompatActivity() {
                 cid: String
             ) {
 
-                binding.tvContent.text = cardInfo.address
-                finish()
+                binding.tvContent.text = cardInfo.id
+//                finish()
             }
 
             override fun onGetCardId(cardNumber: String) {
-
+                binding.tvContent.text =  cardNumber.toBigInteger(16).toString()
             }
 
             override fun onCardRemove() {

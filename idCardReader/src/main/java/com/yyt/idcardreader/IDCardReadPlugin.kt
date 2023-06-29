@@ -8,6 +8,7 @@ import com.yyt.idcardreader.model.ReportReadIDCardEvent
 import com.yyt.idcardreader.presenter.ReaderPresenter
 import com.yyt.idcardreader.view.IReaderView
 import java.lang.ref.WeakReference
+import kotlin.math.log
 
 /**
  *@packageName com.yyt.idcardreader
@@ -92,12 +93,13 @@ class IDCardReadPlugin : IReaderView {
     }
 
     override fun onReadACardSuccessed(card_sn: ByteArray?) {
-
+        Log.d(TAG, "onReadACardSuccessed: 1213")
         if (card_sn!=null){
             //cardANo=String.format("%02X%02X%02X%02X", data[0], data[1], data[2], data[3]);
             var cardANo = ""
+
             for (i in card_sn.indices) {
-                cardANo += String.format("%02X", card_sn[i])
+                cardANo += String.format("%02X", card_sn[card_sn.indices.last-i])
             }
             onReadListener?.onGetCardId(cardANo)
         }
