@@ -18,19 +18,20 @@ import kotlin.math.log
 class IDCardReadPlugin : IReaderView {
 
     private val TAG = "IDCardReadPlugin"
+
     companion object {
         val instance by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
             IDCardReadPlugin()
         }
         private var context: WeakReference<Context>? = null
 
-        fun initContext(context: Context){
+        fun initContext(context: Context) {
             this.context = WeakReference(context)
         }
     }
 
 
-    private var presenter: ReaderPresenter?=null
+    private var presenter: ReaderPresenter? = null
     private val defaultOption: DeviceParamBean
         get() {
             val bean = DeviceParamBean()
@@ -45,18 +46,26 @@ class IDCardReadPlugin : IReaderView {
             return bean
         }
 
-    var onReadListener: OnReadResultListener? = null
+    private var onReadListeners = mutableListOf<OnReadResultListener>()
 
+    fun addListener(listener:OnReadResultListener){
+        onReadListeners.add(listener)
+    }
 
+    fun removeListener(listener:OnReadResultListener){
+        onReadListeners.remove(listener)
+    }
 
     fun startRead(param: DeviceParamBean? = null) {
-        try{
-            if (presenter==null){
+        try {
+            if (presenter == null) {
                 presenter = ReaderPresenter(this)
             }
             presenter?.startReadcard(param ?: defaultOption)
-        }catch (e:Exception){
-            onReadListener?.onFail("读卡器开启失败，请检查是否连接读卡器")
+        } catch (e: Exception) {
+            for (listener in onReadListeners) {
+                listener.onFail("读卡器开启失败，请检查是否连接读卡器")
+            }
         }
     }
 
@@ -72,16 +81,22 @@ class IDCardReadPlugin : IReaderView {
     override fun onReadIDCardSuccessed(event: ReportReadIDCardEvent?) {
         if (event != null) {
             Log.d(TAG, "onReadIDCardSuccessed: ${event.getiDCardInfo()}")
-            onReadListener?.onGetIDCardInfo(event.getiDCardInfo(),event.cid?:"")
+            for (listener in onReadListeners) {
+                listener.onGetIDCardInfo(event.getiDCardInfo(), event.cid ?: "")
+            }
         }
     }
 
     override fun onReadIDCardFailed() {
-        onReadListener?.onFail("读卡失败")
+        for (listener in onReadListeners) {
+            listener.onFail("读卡失败")
+        }
     }
 
     override fun onCardRemoved() {
-        onReadListener?.onCardRemove()
+        for (listener in onReadListeners) {
+            listener.onCardRemove()
+        }
     }
 
     override fun appendLog(code: Int, log: String?) {
@@ -94,14 +109,16 @@ class IDCardReadPlugin : IReaderView {
 
     override fun onReadACardSuccessed(card_sn: ByteArray?) {
         Log.d(TAG, "onReadACardSuccessed: 1213")
-        if (card_sn!=null){
+        if (card_sn != null) {
             //cardANo=String.format("%02X%02X%02X%02X", data[0], data[1], data[2], data[3]);
             var cardANo = ""
 
             for (i in card_sn.indices) {
-                cardANo += String.format("%02X", card_sn[card_sn.indices.last-i])
+                cardANo += String.format("%02X", card_sn[card_sn.indices.last - i])
             }
-            onReadListener?.onGetCardId(cardANo)
+            for (listener in onReadListeners) {
+                listener.onGetCardId(cardANo)
+            }
         }
     }
 
@@ -120,6 +137,7 @@ class IDCardReadPlugin : IReaderView {
             presenter?.release()
             presenter = null
         }
+        onReadListeners.clear()
         IDCardReadPlugin.context = null
     }
 

@@ -7,7 +7,7 @@ import com.routon.plsy.reader.sdk.common.Info
 import com.yyt.idcardreader.IDCardReadPlugin
 import com.yyt.jinglunreader.databinding.ActivityMainBinding
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(),IDCardReadPlugin.OnReadResultListener {
     lateinit var binding:ActivityMainBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,33 +24,31 @@ class MainActivity : AppCompatActivity() {
             IDCardReadPlugin.instance.stopRead()
         }
 
-        IDCardReadPlugin.instance.onReadListener = object :IDCardReadPlugin.OnReadResultListener{
-            override fun onGetIDCardInfo(
-                cardInfo: Info.IDCardInfo,
-                cid: String
-            ) {
-
-                binding.tvContent.text = cardInfo.id
-//                finish()
-            }
-
-            override fun onGetCardId(cardNumber: String) {
-                binding.tvContent.text =  cardNumber.toBigInteger(16).toString()
-            }
-
-            override fun onCardRemove() {
-                binding.tvContent.text = "卡已离开"
-            }
-
-            override fun onFail(error: String) {
-                binding.tvContent.text = "错误==>${error}"
-            }
-
-        }
+        IDCardReadPlugin.instance.addListener(this)
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        IDCardReadPlugin.instance.removeListener(this)
         IDCardReadPlugin.instance.release()
+    }
+
+    override fun onGetIDCardInfo(cardInfo: Info.IDCardInfo, cid: String) {
+        binding.tvContent.text = cardInfo.id
+    }
+
+    override fun onGetCardId(cardNumber: String) {
+        binding.tvContent.text =  cardNumber.toBigInteger(16).toString()
+
+    }
+
+    override fun onCardRemove() {
+        binding.tvContent.text = "卡已离开"
+
+    }
+
+    override fun onFail(error: String) {
+        binding.tvContent.text = "错误==>${error}"
+
     }
 }
